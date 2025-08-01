@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Funny Search</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f2f2f2;
+      padding-top: 50px;
+      transition: background-color 0.5s ease;
+    }
+
+    input {
+      padding: 10px;
+      width: 250px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin-left: 10px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: none;
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #3e8e41;
+    }
+
+    #result {
+      margin-top: 30px;
+    }
+
+    #result img {
+      width: 300px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .prank {
+      font-size: 28px;
+      color: crimson;
+      animation: shake 0.5s infinite;
+      font-weight: bold;
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      50% { transform: translateX(10px); }
+      75% { transform: translateX(-10px); }
+      100% { transform: translateX(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Search Anything</h1>
+  <input type="text" id="searchBox" placeholder="Type here...">
+  <button onclick="handleSearch()">Search</button>
+
+  <div id="result"></div>
+
+  <!-- Sound Effect -->
+  <audio id="prankSound" src="https://www.myinstants.com/media/sounds/trollolol.mp3"></audio>
+
+  <!-- Confetti Library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+
+  <script>
+    let searchCount = 0;
+
+    const memes = [
+      "https://i.imgur.com/1JY5M6G.jpg",
+      "https://i.imgur.com/4M34hi2.jpg",
+      "https://i.imgur.com/w3duR07.png"
+    ];
+
+    const animals = [
+      "https://placebear.com/300/200",
+      "https://placekitten.com/300/200",
+      "https://place-puppy.com/300x200"
+    ];
+
+    function randomColor() {
+      return "#" + Math.floor(Math.random() * 16777215).toString(16);
+    }
+
+    function handleSearch() {
+      searchCount++;
+
+      const resultDiv = document.getElementById("result");
+      resultDiv.innerHTML = "<p>🔍 Searching...</p>";
+
+      document.body.style.backgroundColor = randomColor();
+
+      setTimeout(() => {
+        showResult(resultDiv);
+      }, 1500);
+    }
+
+    function showResult(resultDiv) {
+      resultDiv.innerHTML = "";
+      let type = searchCount % 3;
+
+      if (type === 1) {
+        const img = document.createElement("img");
+        img.src = memes[Math.floor(Math.random() * memes.length)];
+        resultDiv.appendChild(img);
+        confetti();
+      } else if (type === 2) {
+        const img = document.createElement("img");
+        img.src = animals[Math.floor(Math.random() * animals.length)];
+        resultDiv.appendChild(img);
+        confetti();
+      } else {
+        resultDiv.innerHTML = "<h2 class='prank'>😂 It's a prank!</h2>";
+        document.getElementById("prankSound").play();
+        confetti();
+      }
+    }
+  </script>
+
+</body>
+</html>
