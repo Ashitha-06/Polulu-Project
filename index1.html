@@ -2,132 +2,229 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Funny Search</title>
+  <title>Funny Search - Prosulutions!!!</title>
   <style>
     body {
       text-align: center;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f2f2f2;
+      background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
       padding-top: 50px;
-      transition: background-color 0.5s ease;
+      transition: background 0.5s ease;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background-color: #fff0f5;
+      padding: 10px 0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    nav a {
+      margin: 0 15px;
+      text-decoration: none;
+      color: #ff4081;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    h1 {
+      font-size: 48px;
+      color: #ff4081;
+      animation: pulse 2s infinite;
+      margin-top: 80px;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
     }
 
     input {
-      padding: 10px;
-      width: 250px;
-      font-size: 16px;
+      padding: 14px 20px;
+      font-size: 18px;
+      width: 320px;
+      border: 2px solid #ccc;
       border-radius: 10px;
-      border: 1px solid #ccc;
+      outline: none;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
     button {
-      padding: 10px 20px;
+      padding: 14px 28px;
       margin-left: 10px;
-      font-size: 16px;
-      border-radius: 10px;
-      border: none;
-      background-color: #4CAF50;
+      font-size: 18px;
+      background: linear-gradient(to right, #ff416c, #ff4b2b);
       color: white;
+      border: none;
+      border-radius: 10px;
       cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: transform 0.2s ease;
     }
 
     button:hover {
-      background-color: #3e8e41;
+      transform: scale(1.05);
     }
 
     #result {
-      margin-top: 30px;
+      margin-top: 40px;
+      animation: fadeIn 0.8s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
     #result img {
-      width: 300px;
+      max-width: 450px;
+      height: auto;
       border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      margin-top: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      transition: transform 0.3s, box-shadow 0.3s;
     }
 
-    .prank {
-      font-size: 28px;
-      color: crimson;
-      animation: shake 0.5s infinite;
+    #result img:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    .message {
+      font-size: 24px;
+      color: #333;
+      margin-top: 20px;
       font-weight: bold;
     }
 
-    @keyframes shake {
-      0% { transform: translateX(0); }
-      25% { transform: translateX(-10px); }
-      50% { transform: translateX(10px); }
-      75% { transform: translateX(-10px); }
-      100% { transform: translateX(0); }
+    .flash {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: white;
+      opacity: 0;
+      z-index: 999;
+      pointer-events: none;
+      animation: flashAnim 0.5s ease;
+    }
+
+    @keyframes flashAnim {
+      0% { opacity: 0; }
+      50% { opacity: 0.8; }
+      100% { opacity: 0; }
     }
   </style>
 </head>
 <body>
+  <nav>
+    <a href="#">Home</a>
+    <a href="#" onclick="alert('This would be Memes Page')">Memes</a>
+    <a href="#" onclick="alert('This would be Pranks Page')">Pranks</a>
+    <a href="#" onclick="alert('This would be About Page')">About</a>
+  </nav>
 
-  <h1>Search Anything</h1>
-  <input type="text" id="searchBox" placeholder="Type here...">
-  <button onclick="handleSearch()">Search</button>
+  <h1>Wanna know? Just search — no cap. 💅🔥</h1>
+  <input type="text" id="searchInput" placeholder="Type anything...">
+  <button onclick="search()">Search</button>
 
   <div id="result"></div>
+  <div id="flash" class="flash"></div>
 
-  <!-- Sound Effect -->
-  <audio id="prankSound" src="https://www.myinstants.com/media/sounds/trollolol.mp3"></audio>
+  <!-- Sound Effects -->
+  <audio id="prankSound" src="https://www.soundjay.com/button/beep-07.wav"></audio>
+  <audio id="sirenSound" src="https://www.soundjay.com/misc/sounds/police-siren-01.mp3"></audio>
 
-  <!-- Confetti Library -->
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+  <!-- Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <script>
-    let searchCount = 0;
-
-    const memes = [
-      "https://i.imgur.com/1JY5M6G.jpg",
-      "https://i.imgur.com/4M34hi2.jpg",
-      "https://i.imgur.com/w3duR07.png"
+    const messages = [
+      "This meme is bussin' 💯",
+      "No cap, this one hits hard 😂",
+      "Main character meme unlocked 🎬",
+      "Delulu? Maybe. But still fire 🔥",
+      "Okay, but why is this so real? 😭",
+      "Slay that scroll 💅",
+      "Vibe check: passed ✅",
+      "Not mid, not sus — certified LOL 😆"
     ];
 
-    const animals = [
-      "https://placebear.com/300/200",
-      "https://placekitten.com/300/200",
-      "https://place-puppy.com/300x200"
-    ];
+    const personalizedReplies = {
+      "exam": "Bruh, ain't nobody ready for exams 💀",
+      "love": "Love is blind, but memes can see everything 😘",
+      "study": "Studying? That's so retro 📚",
+      "bored": "You're bored? Here's some spice 🌶️",
+      "funny": "You rang? Here's a certified LOL 🤡",
+      "crush": "Your crush will never know... but this meme does 😏",
+      "engineer": "Engineer life = caffeine + memes ⚙️☕"
+    };
 
-    function randomColor() {
-      return "#" + Math.floor(Math.random() * 16777215).toString(16);
+    function launchConfetti() {
+      confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
     }
 
-    function handleSearch() {
-      searchCount++;
+    function flashScreen() {
+      const flash = document.getElementById("flash");
+      flash.classList.remove("flash");
+      void flash.offsetWidth;
+      flash.classList.add("flash");
+    }
 
+    function playSound(id) {
+      const sound = document.getElementById(id);
+      sound.currentTime = 0;
+      sound.play();
+    }
+
+    function search() {
       const resultDiv = document.getElementById("result");
-      resultDiv.innerHTML = "<p>🔍 Searching...</p>";
-
-      document.body.style.backgroundColor = randomColor();
-
-      setTimeout(() => {
-        showResult(resultDiv);
-      }, 1500);
-    }
-
-    function showResult(resultDiv) {
+      const query = document.getElementById("searchInput").value.toLowerCase();
       resultDiv.innerHTML = "";
-      let type = searchCount % 3;
 
-      if (type === 1) {
-        const img = document.createElement("img");
-        img.src = memes[Math.floor(Math.random() * memes.length)];
-        resultDiv.appendChild(img);
-        confetti();
-      } else if (type === 2) {
-        const img = document.createElement("img");
-        img.src = animals[Math.floor(Math.random() * animals.length)];
-        resultDiv.appendChild(img);
-        confetti();
+      const isPrank = Math.random() < 0.25;
+
+      if (isPrank) {
+        resultDiv.innerHTML = `
+          <div class="message">🚨 You are under arrest for being too curious!</div>
+          <img src="https://i.imgur.com/UYBD5HC.jpeg" alt="Arrested goat">
+        `;
+        flashScreen();
+        playSound("sirenSound");
       } else {
-        resultDiv.innerHTML = "<h2 class='prank'>😂 It's a prank!</h2>";
-        document.getElementById("prankSound").play();
-        confetti();
+        const replyKey = Object.keys(personalizedReplies).find(key => query.includes(key));
+        const displayMsg = replyKey ? personalizedReplies[replyKey] : messages[Math.floor(Math.random() * messages.length)];
+
+        fetch("https://meme-api.com/gimme")
+          .then(response => response.json())
+          .then(data => {
+            const memeUrl = data.url;
+            resultDiv.innerHTML = `
+              <div class="message">${displayMsg}</div>
+              <img src="${memeUrl}" alt="Funny Meme">
+            `;
+            launchConfetti();
+            playSound("prankSound");
+          })
+          .catch(error => {
+            resultDiv.innerHTML = `<p>Oops! Couldn't fetch memes 😢</p>`;
+            console.error("Error fetching meme:", error);
+          });
       }
     }
   </script>
-
 </body>
 </html>
